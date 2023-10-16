@@ -8,10 +8,9 @@ import java.util.List;
 
 /**
  *
- * @author MINHNHAT
+ * @author WitherDragon
  */
 public class Children {
-
     String tag;
 
     public String getTag() {

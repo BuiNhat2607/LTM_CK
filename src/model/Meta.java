@@ -4,11 +4,14 @@
  */
 package model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  *
  * @author MINHNHAT
  */
 public class Meta {
+    @SerializedName("status")
     private int status;
 
     public int getStatus() {

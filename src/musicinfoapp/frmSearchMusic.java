@@ -5,7 +5,6 @@
 package musicinfoapp;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,17 +16,17 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import model.Artist;
-import model.Children;
-import model.Dom;
+//import model.Children;
+//import model.Dom;
 import model.GeniusApiResponse;
 import model.GeniusArtistApiResponse;
 import model.Hit;
 import model.Meta;
-import model.P;
+//import model.P;
 import model.PrimaryArtist;
 import model.Response;
 import model.Result;
-import model.Tag;
+//import model.Tag;
 
 /**
  *
@@ -176,33 +175,36 @@ public class frmSearchMusic extends javax.swing.JFrame {
         int artistID = firstResult.getPrimary_artist().getId();
 
         String apiArtistResponse = sendRequestToServer("artist" + "@" + artistID);
-        System.out.println("Ket qua lay nghe si ::" + apiArtistResponse);
+        String unescappedJson=apiArtistResponse.replaceAll("\\\\", "");
+        System.out.println("Ket qua lay nghe si ::********************" + unescappedJson);
 
         // Parse the API response to get artist information
-        GeniusArtistApiResponse artistApiResponse = gson.fromJson(apiArtistResponse, GeniusArtistApiResponse.class);
-        Artist artist = artistApiResponse.getResponse().getArtist();
-
-        // Display the artist information in the text area
-        if (artist != null && artist.getDescription() != null && artist.getDescription().getDom() != null) {
-            Dom dom = artist.getDescription().getDom();
-            Tag tag = dom.getTag();
-
-            List<Children> resultChildren = tag.getChildren();
-            if (!resultChildren.isEmpty()) {
-                StringBuilder artistDescription = new StringBuilder();
-
-                for (Children child : resultChildren) {
-                    artistDescription.append(child.getTag()).append(": ");
-                    List<P> pList = child.getChildren();
-                    for (P p : pList) {
-                        artistDescription.append(p.getTag()).append(": ");
-                        artistDescription.append(String.join(" ", p.getChildren())).append("\n");
-                    }
-                }
-
-                txtArtistsInfo.setText(artistDescription.toString());
-            }
-        }
+        GeniusArtistApiResponse artistApiResponse = gson.fromJson(unescappedJson, GeniusArtistApiResponse.class);
+//        System.out.println("Ket qua lay nghe si ::********************" + gson.toJson(artistApiResponse));
+//        System.out.println();
+//        Artist artist = artistApiResponse.getResponse().getArtist();
+//
+//        // Display the artist information in the text area
+//        if (artist != null && artist.getDescription() != null && artist.getDescription().getDom() != null) {
+//            Dom dom = artist.getDescription().getDom();
+//            Tag tag = dom.getTag();
+//
+//            List<Children> resultChildren = tag.getChildren();
+//            if (!resultChildren.isEmpty()) {
+//                StringBuilder artistDescription = new StringBuilder();
+//
+//                for (Children child : resultChildren) {
+//                    artistDescription.append(child.getTag()).append(": ");
+//                    List<P> pList = child.getChildren();
+//                    for (P p : pList) {
+//                        artistDescription.append(p.getTag()).append(": ");
+//                        artistDescription.append(String.join(" ", p.getChildren())).append("\n");
+//                    }
+//                }
+//
+//                txtArtistsInfo.setText(artistDescription.toString());
+//            }
+//        }
         txtResult.setText("Tên của bài hát đầu tiên tìm thấy: " + songTitle + "\n" + "Danh sách các nghệ sĩ :" + "\n" + artists);
         loadImageFromUrl(firstResult.getHeader_image_thumbnail_url());
 

@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
-import org.json.JSONObject;
 
 /**
  *
@@ -36,7 +35,7 @@ public class TCPThread extends Thread {
     @Override
     public void run() {
         try (
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);) {
             //Nhận dữ liệu từ client
             String[] fromClient = in.readLine().split("@");
             if (fromClient.length == 2) {
@@ -44,8 +43,8 @@ public class TCPThread extends Thread {
                     out.println(searchGeniusAPI(fromClient[1]));
                 } else if (fromClient[0].equals("artist")) {
                     String kq = getArtistAPI(fromClient[1]);
-                    System.out.println("Ket qua :::::" + kq);
                     out.println(gson.toJson(kq));
+                    System.out.println("Ket qua ::::::::::::::::::::::::::::::::::::::::::::::::" + kq);
                 }
             }
             out.println("Sai request");
@@ -100,7 +99,10 @@ public class TCPThread extends Thread {
     public String getArtistAPI(String artistId) {
         try {
             // Construct the API URL for artists
-            URL url = new URL(GENIUS_API_ARTIST + artistId);
+            String encodedQuery = artistId.replace(" ", "%20");
+            String apiUrl = GENIUS_API_ARTIST + encodedQuery;
+
+            URL url = new URL(apiUrl);
 
             // Open a connection to the API URL
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -119,8 +121,8 @@ public class TCPThread extends Thread {
                     response.append(inputLine);
                 }
                 in.close();
-
                 return response.toString();
+                
             } else {
                 System.err.println("Failed to fetch data. Response code: " + responseCode);
                 return null;

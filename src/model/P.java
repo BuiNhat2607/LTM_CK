@@ -6,10 +6,9 @@ package model;
 
 /**
  *
- * @author MINHNHAT
+ * @author WitherDragon
  */
 public class P {
-
     String tag;
     String[] children;
 

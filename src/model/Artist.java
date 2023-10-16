@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class Artist {
 
-    public List<String> getAlternateNames() {
-        return alternateNames;
-    }
-
-    public void setAlternateNames(List<String> alternateNames) {
-        this.alternateNames = alternateNames;
-    }
+//    public List<String> getAlternateNames() {
+//        return alternateNames;
+//    }
+//
+//    public void setAlternateNames(List<String> alternateNames) {
+//        this.alternateNames = alternateNames;
+//    }
 
     public String getApiPath() {
         return apiPath;
@@ -157,8 +157,8 @@ public class Artist {
         this.descriptionAnnotation = descriptionAnnotation;
     }
 
-    @SerializedName("alternate_names")
-    List<String> alternateNames;
+//    @SerializedName("alternate_names")
+//    List<String> alternateNames;
     @SerializedName("api_path")
     String apiPath;
     Description description;

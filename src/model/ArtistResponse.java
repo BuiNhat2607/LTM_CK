@@ -4,11 +4,14 @@
  */
 package model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  *
  * @author MINHNHAT
  */
 public class ArtistResponse {
+    @SerializedName("artist")
     private Artist artist;
 
     public Artist getArtist() {
