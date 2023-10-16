@@ -15,6 +15,8 @@ public class Hit {
     private String index;
     private String type;
     private Result result;
+    
+    
 
     public List<String> getHighlights() {
         return highlights;
