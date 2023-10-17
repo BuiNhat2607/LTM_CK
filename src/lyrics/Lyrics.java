@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package songs;
+package lyrics;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,15 +10,15 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author WitherDragon
  */
-public class SongLyricsResponse {
+ public class Lyrics {
     @SerializedName("lyrics")
-    private Lyrics lyrics;
+    private LyricsContent lyricsContent;
 
-    public Lyrics getLyrics() {
-        return lyrics;
+    public LyricsContent getLyricsContent() {
+        return lyricsContent;
     }
 
-    public void setLyrics(Lyrics lyrics) {
-        this.lyrics = lyrics;
+    public void setLyricsContent(LyricsContent lyricsContent) {
+        this.lyricsContent = lyricsContent;
     }
 }

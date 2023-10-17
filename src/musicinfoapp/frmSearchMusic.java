@@ -31,7 +31,7 @@ import model.Meta;
 
 import model.Response;
 import model.Result;
-import songs.SongLyricsResponse;
+import lyrics.SongLyricsResponse;
 
 import org.jsoup.Connection;
 //import model.Tag;
