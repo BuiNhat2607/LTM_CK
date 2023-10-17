@@ -31,6 +31,7 @@ import model.Meta;
 
 import model.Response;
 import model.Result;
+import songs.SongLyricsResponse;
 
 import org.jsoup.Connection;
 //import model.Tag;
@@ -66,7 +67,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         txtResult = new javax.swing.JTextArea();
         lbImage = new javax.swing.JLabel();
-        txtArtist = new javax.swing.JTextField();
+        txtSongID = new javax.swing.JTextField();
         btnLyrics = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -114,7 +115,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
                         .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
-                            .addComponent(txtArtist))
+                            .addComponent(txtSongID))
                         .addGap(28, 28, 28)
                         .addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -135,7 +136,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtArtist, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSongID, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnLyrics, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -231,67 +232,106 @@ public class frmSearchMusic extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnLyricsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLyricsActionPerformed
-       String apiKey = "pcpwO8gJq1Jac6zvUya9bWvL6VzBkAT-Yvff6wsVsjNA2z-QmwJb8K2arSkY7jPZ";
-        String songTitle = txtName.getText();
-        String artistName = "Ed Sheeran";
-
-        try {
-            String apiUrl = "https://api.genius.com/search?q=" + songTitle + " " + artistName;
-            URL url = new URL(apiUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
-
-            int responseCode = connection.getResponseCode();
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
-                JsonObject hits = json.getAsJsonObject("response").getAsJsonArray("hits").get(0).getAsJsonObject();
-                String lyricsUrl = hits.getAsJsonObject("result").get("url").getAsString();
-
-                // You can now fetch the lyrics from the provided URL or continue processing the data.
-                System.out.println("Lyrics URL: " + lyricsUrl);
-                lyricsScraper(lyricsUrl);
-            } else {
-                System.out.println("Failed to retrieve data from Genius API. Response code: " + responseCode);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        String result=fetchLyrics(txtSongID.getText());
+//        System.out.println("Ket qua lyrics"+result);
+//        JsonParser jsonParser = new JsonParser();
+        JsonObject rootJson = JsonParser.parseString(result).getAsJsonObject();
+//        JsonObject rootJson = jsonParser.parse(result).getAsJsonObject();
+        
+        rootJson.getAsJsonObject("lyrics").remove("api_path");
+        rootJson.getAsJsonObject("lyrics").remove("_type");
+        rootJson.getAsJsonObject("lyrics").remove("path");
+        rootJson.getAsJsonObject("lyrics").remove("song_id");
+        rootJson.getAsJsonObject("lyrics").remove("tracking_data");
+        
+        Gson gsonSong = new GsonBuilder().setPrettyPrinting().create();
+        String truncatedJson = gsonSong.toJson(rootJson);
+        
+        SongLyricsResponse responeLyrics=gson.fromJson(truncatedJson, SongLyricsResponse.class);
+//        System.out.println("Ket qua lyrics"+truncatedJson);
+        if (responeLyrics != null) {
+            String lyrics = responeLyrics.getLyrics().getLyricsContent().getBody().getHtml();
+            String cleanedLyrics = lyrics.replaceAll("<[^>]*>", "");
+            txtArtistsInfo.setText(cleanedLyrics);
+            System.out.println("Lyrics: " + cleanedLyrics);
+        } else {
+            System.out.println("Failed to parse lyrics.");
         }
     }//GEN-LAST:event_btnLyricsActionPerformed
-    public void lyricsScraper(String url){
+
+    public String fetchLyrics(String id) {
+        // API URL
+        String apiUrl = "https://genius-song-lyrics1.p.rapidapi.com/song/lyrics/?id=" + id;
+
+        // API headers
+        String host = "genius-song-lyrics1.p.rapidapi.com";
+        String apiKey = "abf487375cmshebd4e9b2f4fd37ap159ac7jsn0277f3d264fe";
 
         try {
-            Connection.Response response = Jsoup.connect(url)
-            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
-            .method(Connection.Method.GET)
-            .execute();
+            // Create a URL object
+            URL url = new URL(apiUrl);
 
-            Document document = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
-                .cookies(response.cookies())
-                .get();
-            Element lyricsElement = document.select("div.lyrics").first();
-            
-            if (lyricsElement != null) {
-                String lyrics = lyricsElement.text();
-                System.out.println("Lyrics:\n" + lyrics);
+            // Open a connection to the URL
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Set the request method to GET
+            connection.setRequestMethod("GET");
+
+            // Set the required headers
+            connection.setRequestProperty("X-RapidAPI-Host", host);
+            connection.setRequestProperty("X-RapidAPI-Key", apiKey);
+
+            // Get the response code
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == 200) {
+                // Request was successful, read and return the lyrics
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+               
+                return response.toString();
             } else {
-                System.out.println("Lyrics not found on the page.");
+                // Handle the error, e.g., by logging or returning an error message
+                System.err.println("Failed to fetch lyrics. Status Code: " + responseCode);
             }
         } catch (IOException e) {
+            // Handle exceptions, e.g., network errors
             e.printStackTrace();
         }
+
+        return null; // Return null in case of an error
     }
+    
+    
+//    public void lyricsScraper(String url){
+//
+//        try {
+//            Connection.Response response = Jsoup.connect(url)
+//            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
+//            .method(Connection.Method.GET)
+//            .execute();
+//
+//            Document document = Jsoup.connect(url)
+//                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
+//                .cookies(response.cookies())
+//                .get();
+//            Element lyricsElement = document.select("div.lyrics").first();
+//            
+//            if (lyricsElement != null) {
+//                String lyrics = lyricsElement.text();
+//                System.out.println("Lyrics:\n" + lyrics);
+//            } else {
+//                System.out.println("Lyrics not found on the page.");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     /**
@@ -339,9 +379,9 @@ public class frmSearchMusic extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbImage;
-    private javax.swing.JTextField txtArtist;
     private javax.swing.JTextArea txtArtistsInfo;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextArea txtResult;
+    private javax.swing.JTextField txtSongID;
     // End of variables declaration//GEN-END:variables
 }

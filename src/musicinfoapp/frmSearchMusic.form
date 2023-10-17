@@ -38,7 +38,7 @@
                       <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="txtName" pref="409" max="32767" attributes="0"/>
-                          <Component id="txtArtist" max="32767" attributes="0"/>
+                          <Component id="txtSongID" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                       <Component id="lbImage" min="-2" pref="480" max="-2" attributes="0"/>
@@ -66,7 +66,7 @@
                       <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnSearch" alignment="3" min="-2" pref="44" max="-2" attributes="0"/>
-                          <Component id="txtArtist" alignment="3" min="-2" pref="44" max="-2" attributes="0"/>
+                          <Component id="txtSongID" alignment="3" min="-2" pref="44" max="-2" attributes="0"/>
                           <Component id="btnLyrics" alignment="3" min="-2" pref="52" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -136,7 +136,7 @@
     </Container>
     <Component class="javax.swing.JLabel" name="lbImage">
     </Component>
-    <Component class="javax.swing.JTextField" name="txtArtist">
+    <Component class="javax.swing.JTextField" name="txtSongID">
     </Component>
     <Component class="javax.swing.JButton" name="btnLyrics">
       <Properties>

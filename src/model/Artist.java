@@ -133,13 +133,6 @@ public class Artist {
         this.url = url;
     }
 
-    public CurrentUserMetadata getCurrentUserMetadata() {
-        return currentUserMetadata;
-    }
-
-    public void setCurrentUserMetadata(CurrentUserMetadata currentUserMetadata) {
-        this.currentUserMetadata = currentUserMetadata;
-    }
 
     public int getIq() {
         return iq;
@@ -175,7 +168,5 @@ public class Artist {
     @SerializedName("twitter_name")
     String twitterName;
     String url;
-    @SerializedName("current_user_metadata")
-    CurrentUserMetadata currentUserMetadata;
     int iq;
 }
