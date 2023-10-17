@@ -5,10 +5,14 @@
 package musicinfoapp;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
@@ -22,11 +26,17 @@ import model.GeniusApiResponse;
 import model.GeniusArtistApiResponse;
 import model.Hit;
 import model.Meta;
+
 //import model.P;
-import model.PrimaryArtist;
+
 import model.Response;
 import model.Result;
+
+import org.jsoup.Connection;
 //import model.Tag;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  *
@@ -57,6 +67,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
         txtResult = new javax.swing.JTextArea();
         lbImage = new javax.swing.JLabel();
         txtArtist = new javax.swing.JTextField();
+        btnLyrics = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,6 +90,13 @@ public class frmSearchMusic extends javax.swing.JFrame {
         txtResult.setRows(5);
         jScrollPane2.setViewportView(txtResult);
 
+        btnLyrics.setText("Lyrics");
+        btnLyrics.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLyricsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -89,8 +107,11 @@ public class frmSearchMusic extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(159, 159, 159)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(btnLyrics, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                             .addComponent(txtArtist))
@@ -114,7 +135,8 @@ public class frmSearchMusic extends javax.swing.JFrame {
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtArtist, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtArtist, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnLyrics, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -158,7 +180,11 @@ public class frmSearchMusic extends javax.swing.JFrame {
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
 
         String result = sendRequestToServer("search" + "@" + txtName.getText());
-        System.out.println(result);
+        JsonParser jsonParser = new JsonParser();
+        JsonObject rootJson = jsonParser.parse(result).getAsJsonObject();
+        Gson gsonSong = new GsonBuilder().setPrettyPrinting().create();
+        String truncatedJson = gsonSong.toJson(rootJson);
+        System.out.println("KEt qua bai hat :"+truncatedJson);
         GeniusApiResponse geniusApiResponse = gson.fromJson(result, GeniusApiResponse.class);
 
         // Access the parsed data
@@ -175,45 +201,99 @@ public class frmSearchMusic extends javax.swing.JFrame {
         int artistID = firstResult.getPrimary_artist().getId();
 
         String apiArtistResponse = sendRequestToServer("artist" + "@" + artistID);
-        String unescappedJson=apiArtistResponse.replaceAll("\\\\", "");
-        System.out.println("Ket qua lay nghe si ::********************" + unescappedJson);
+        
+//        String unescappedJson=apiArtistResponse.replaceAll("\\\\", "");
+//        System.out.println("Ket qua lay nghe si ::********************" + unescappedJson);
+        JsonParser jsonParser2 = new JsonParser();
+        JsonObject rootObject = jsonParser2.parse(apiArtistResponse).getAsJsonObject();
 
+        // Remove the "user" field from the JSON
+        rootObject.getAsJsonObject("response").getAsJsonObject("artist").remove("user");
+        rootObject.getAsJsonObject("response").getAsJsonObject("artist").remove("description_annotation");
+        rootObject.getAsJsonObject("response").getAsJsonObject("artist").remove("current_user_metadata");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String truncatedJsonArtist = gson.toJson(rootObject);
+//        if (jsonObject.getAsJsonObject("response").getAsJsonObject("artist").has("current_user_metadata")) {
+//            
+//        }
+        System.out.println("Ket qua ::********************" + truncatedJsonArtist.toString());
         // Parse the API response to get artist information
-        GeniusArtistApiResponse artistApiResponse = gson.fromJson(unescappedJson, GeniusArtistApiResponse.class);
+        GeniusArtistApiResponse artistApiResponse = gson.fromJson(truncatedJsonArtist.toString(), GeniusArtistApiResponse.class);
 //        System.out.println("Ket qua lay nghe si ::********************" + gson.toJson(artistApiResponse));
 //        System.out.println();
-//        Artist artist = artistApiResponse.getResponse().getArtist();
-//
-//        // Display the artist information in the text area
-//        if (artist != null && artist.getDescription() != null && artist.getDescription().getDom() != null) {
-//            Dom dom = artist.getDescription().getDom();
-//            Tag tag = dom.getTag();
-//
-//            List<Children> resultChildren = tag.getChildren();
-//            if (!resultChildren.isEmpty()) {
-//                StringBuilder artistDescription = new StringBuilder();
-//
-//                for (Children child : resultChildren) {
-//                    artistDescription.append(child.getTag()).append(": ");
-//                    List<P> pList = child.getChildren();
-//                    for (P p : pList) {
-//                        artistDescription.append(p.getTag()).append(": ");
-//                        artistDescription.append(String.join(" ", p.getChildren())).append("\n");
-//                    }
-//                }
-//
-//                txtArtistsInfo.setText(artistDescription.toString());
-//            }
-//        }
+        Artist artist = artistApiResponse.getResponse().getArtist();
+        txtArtistsInfo.setText(artist.getDescription().getPlain());
         txtResult.setText("Tên của bài hát đầu tiên tìm thấy: " + songTitle + "\n" + "Danh sách các nghệ sĩ :" + "\n" + artists);
         loadImageFromUrl(firstResult.getHeader_image_thumbnail_url());
+        
 
 
     }//GEN-LAST:event_btnSearchActionPerformed
 
-//    private GeniusApiResponse convertToGeniusRespone(String json){
-    //        return gson.fromJson(json, GeniusApiResponse.class);
-    //    }
+    private void btnLyricsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLyricsActionPerformed
+       String apiKey = "pcpwO8gJq1Jac6zvUya9bWvL6VzBkAT-Yvff6wsVsjNA2z-QmwJb8K2arSkY7jPZ";
+        String songTitle = txtName.getText();
+        String artistName = "Ed Sheeran";
+
+        try {
+            String apiUrl = "https://api.genius.com/search?q=" + songTitle + " " + artistName;
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
+
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
+                JsonObject hits = json.getAsJsonObject("response").getAsJsonArray("hits").get(0).getAsJsonObject();
+                String lyricsUrl = hits.getAsJsonObject("result").get("url").getAsString();
+
+                // You can now fetch the lyrics from the provided URL or continue processing the data.
+                System.out.println("Lyrics URL: " + lyricsUrl);
+                lyricsScraper(lyricsUrl);
+            } else {
+                System.out.println("Failed to retrieve data from Genius API. Response code: " + responseCode);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnLyricsActionPerformed
+    public void lyricsScraper(String url){
+
+        try {
+            Connection.Response response = Jsoup.connect(url)
+            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
+            .method(Connection.Method.GET)
+            .execute();
+
+            Document document = Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
+                .cookies(response.cookies())
+                .get();
+            Element lyricsElement = document.select("div.lyrics").first();
+            
+            if (lyricsElement != null) {
+                String lyrics = lyricsElement.text();
+                System.out.println("Lyrics:\n" + lyrics);
+            } else {
+                System.out.println("Lyrics not found on the page.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * @param args the command line arguments
      */
@@ -253,6 +333,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLyrics;
     private javax.swing.JButton btnSearch;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

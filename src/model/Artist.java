@@ -5,7 +5,7 @@
 package model;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.List;
+
 
 /**
  *
@@ -149,14 +149,6 @@ public class Artist {
         this.iq = iq;
     }
 
-    public DescriptionAnnotation getDescriptionAnnotation() {
-        return descriptionAnnotation;
-    }
-
-    public void setDescriptionAnnotation(DescriptionAnnotation descriptionAnnotation) {
-        this.descriptionAnnotation = descriptionAnnotation;
-    }
-
 //    @SerializedName("alternate_names")
 //    List<String> alternateNames;
     @SerializedName("api_path")
@@ -186,6 +178,4 @@ public class Artist {
     @SerializedName("current_user_metadata")
     CurrentUserMetadata currentUserMetadata;
     int iq;
-    @SerializedName("description_annotation")
-    DescriptionAnnotation descriptionAnnotation;
 }

@@ -43,7 +43,7 @@ public class TCPThread extends Thread {
                     out.println(searchGeniusAPI(fromClient[1]));
                 } else if (fromClient[0].equals("artist")) {
                     String kq = getArtistAPI(fromClient[1]);
-                    out.println(gson.toJson(kq));
+                    out.println(kq);
                     System.out.println("Ket qua ::::::::::::::::::::::::::::::::::::::::::::::::" + kq);
                 }
             }
@@ -100,7 +100,7 @@ public class TCPThread extends Thread {
         try {
             // Construct the API URL for artists
             String encodedQuery = artistId.replace(" ", "%20");
-            String apiUrl = GENIUS_API_ARTIST + encodedQuery;
+            String apiUrl = GENIUS_API_ARTIST + encodedQuery+"?text_format=plain";
 
             URL url = new URL(apiUrl);
 

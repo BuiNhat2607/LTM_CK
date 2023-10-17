@@ -9,13 +9,23 @@ package model;
  * @author MINHNHAT
  */
 public class Description {
-       Dom dom;
+//       Dom dom;
+//
+//    public Dom getDom() {
+//        return dom;
+//    }
+//
+//    public void setDom(Dom dom) {
+//        this.dom = dom;
+//    }
+    private String plain;
 
-    public Dom getDom() {
-        return dom;
+    public String getPlain() {
+        return plain;
     }
 
-    public void setDom(Dom dom) {
-        this.dom = dom;
+    public void setPlain(String plain) {
+        this.plain = plain;
     }
+    
 }
