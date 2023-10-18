@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -22,6 +23,9 @@ import javax.swing.SwingWorker;
 import javax.swing.border.Border;
 import lyrics.SongLyricsResponse;
 import model.Hit;
+import model.song.Media;
+import model.song.Song;
+import model.song.SongAPIResponse;
 
 /**
  *
@@ -100,7 +104,7 @@ public class frmSong extends javax.swing.JFrame {
             }
         });
 
-        btnOpenWeb.setText("Genius info");
+        btnOpenWeb.setText("Mở video");
         btnOpenWeb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOpenWebActionPerformed(evt);
@@ -156,11 +160,20 @@ public class frmSong extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOpenWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenWebActionPerformed
+        String result=sendRequestToServer("song"+"@"+hit.getResult().getId());
+        SongAPIResponse song=new Gson().fromJson(result, SongAPIResponse.class);
+        System.out.println("Ket qua bai hat tra ve ::"+result);
+        GeniusWebView gwv=new GeniusWebView();
+        
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                 frmGeniusWebView frm=new frmGeniusWebView(hit.getResult().getUrl());
-                frm.setVisible(true);
+                List<Media> listMedia=song.getResponse().getSong().getMedia();
+                for(Media me : listMedia){
+                    if(me.getProvider().equals("youtube")){
+                        gwv.buildBroswer(me.getUrl());
+                    }
+                }
                 return null;
             }
         };

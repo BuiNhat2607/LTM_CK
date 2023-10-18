@@ -58,4 +58,58 @@ public class TruncateJson {
         rootJson.getAsJsonObject("lyrics").remove("tracking_data");
         return rootJson.toString();
     }
+    public static String truncateMediaJson(String json) {
+        JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
+
+        JsonObject songObject = rootJson.getAsJsonObject("response").getAsJsonObject("song");
+
+        // Remove unwanted properties from the "song" object
+        songObject.remove("annotation_count");
+        songObject.remove("api_path");
+        songObject.remove("apple_music_id");
+        songObject.remove("apple_music_player_url");
+        songObject.remove("artist_names");
+        songObject.remove("description");
+        songObject.remove("embed_content");
+        songObject.remove("featured_video");
+        songObject.remove("full_title");
+        songObject.remove("header_image_thumbnail_url");
+        songObject.remove("header_image_url");
+        songObject.remove("id");
+        songObject.remove("language");
+        songObject.remove("lyrics_owner_id");
+        songObject.remove("lyrics_placeholder_reason");
+        songObject.remove("lyrics_state");
+        songObject.remove("path");
+        songObject.remove("pyongs_count");
+        songObject.remove("recording_location");
+        songObject.remove("relationships_index_url");
+        songObject.remove("release_date");
+        songObject.remove("release_date_for_display");
+        songObject.remove("release_date_with_abbreviated_month_for_display");
+        songObject.remove("song_art_image_thumbnail_url");
+        songObject.remove("song_art_image_url");
+        songObject.remove("stats");
+        songObject.remove("title");
+        songObject.remove("title_with_featured");
+        songObject.remove("url");
+        songObject.remove("current_user_metadata");
+        songObject.remove("album");
+        songObject.remove("custom_performances");
+        songObject.remove("description_annotation");
+        songObject.remove("featured_artists");
+        songObject.remove("lyrics_marked_complete_by");
+        songObject.remove("lyrics_marked_staff_approved_by");
+        songObject.remove("primary_artist");
+        songObject.remove("producer_artists");
+        songObject.remove("song_relationships");
+        songObject.remove("translation_songs");
+        songObject.remove("verified_annotations_by");
+        songObject.remove("verified_contributors");
+        songObject.remove("verified_lyrics_by");
+        songObject.remove("writer_artists");
+        System.out.println("Ket qua cat JSON::::"+rootJson.toString());
+        // Convert the modified JSON back to a string
+        return rootJson.toString();
+    }
 }

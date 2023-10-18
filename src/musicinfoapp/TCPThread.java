@@ -6,21 +6,15 @@ package musicinfoapp;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+
 import java.net.Socket;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import lyrics.SongLyricsResponse;
+
 
 /**
  *
@@ -33,6 +27,7 @@ public class TCPThread extends Thread {
     private final Gson gson;
     private final String GENIUS_API_BASE_URL = "https://api.genius.com/search";
     private final String GENIUS_LYRICS_URL = "https://genius-song-lyrics1.p.rapidapi.com/song/lyrics/?id=";
+    private final String GENIUS_SONG_URL = "https://api.genius.com/songs/";
     private final String GENIUS_API_ARTIST = "https://api.genius.com/artists/";
     private final String ACCESS_TOKEN = "gSYQOufTfO1oLNbcxEqmENGxjo87g9cSpproy3hDToubqpJJvNMOSHeohu_I6RIb";
 
@@ -57,9 +52,14 @@ public class TCPThread extends Thread {
                     out.println(kq);
 //                    System.out.println("Ket qua ::::::::::::::::::::::::::::::::::::::::::::::::" + kq);
                 } else if((fromClient[0].equals("lyrics"))){
-                    String kq = getLyricsAPI(fromClient[1]);
+                    String kq = fetchLyrics(fromClient[1]);
 
                     out.println(kq);
+                } else if((fromClient[0].equals("song"))){
+                    String kq = getSongAPI(fromClient[1]);
+                    String response=TruncateJson.truncateMediaJson(kq);
+                    System.out.println("Ket qua bai hat::::::"+response);
+                    out.println(response);
                 }
             }
             out.println("Sai request");
@@ -148,8 +148,8 @@ public class TCPThread extends Thread {
         }
     }
     
-    public String getLyricsAPI(String id) {
-        String result=fetchLyrics(id);
+    public String fetchLyrics(String id) {
+        String result=getLyricsAPI(id);
         
         String truncatedJson=TruncateJson.truncateLyricsJson(result);
 
@@ -160,7 +160,7 @@ public class TCPThread extends Thread {
             return "Fail";
         }
    }
-    public String fetchLyrics(String id) {
+    public String getLyricsAPI(String id) {
         // API URL
         String apiUrl =  GENIUS_LYRICS_URL+ id;
 
@@ -203,6 +203,42 @@ public class TCPThread extends Thread {
         } catch (IOException e) {
             // Handle exceptions, e.g., network errors
             return "Error:"+e.toString();
+        }
+    }
+    public String getSongAPI(String songId) {
+        try {
+            // Construct the API URL for artists
+            String encodedQuery = songId.replace(" ", "%20");
+            String apiUrl = GENIUS_SONG_URL + encodedQuery+"?text_format=plain";
+
+            URL url = new URL(apiUrl);
+
+            // Open a connection to the API URL
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + ACCESS_TOKEN);
+
+            // Get the response from the API
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                return response.toString();
+                
+            } else {
+                System.err.println("Failed to fetch data. Response code: " + responseCode);
+                return null;
+            }
+        } catch (IOException e) {
+            System.err.println("Error fetching data: " + e.getMessage());
+            return null;
         }
     }
 }
