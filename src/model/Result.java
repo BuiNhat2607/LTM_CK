@@ -3,13 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
+import java.util.List;
+
 /**
  *
  * @author MINHNHAT
  */
 public class Result {
-    private int annotation_count;
-    private String api_path;
+
     private String artist_names;
     private String full_title;
     private String header_image_thumbnail_url;
@@ -25,28 +27,16 @@ public class Result {
     private String release_date_with_abbreviated_month_for_display;
     private String song_art_image_thumbnail_url;
     private String song_art_image_url;
-    private Stats stats;
     private String title;
     private String title_with_featured;
     private String url;
-//    private List<String> featured_artists;
+    private List<FeaturedArtists> featured_artists;
     private PrimaryArtist primary_artist;
 
-    public int getAnnotation_count() {
-        return annotation_count;
+    public List<FeaturedArtists> getFeatured_artists() {
+        return featured_artists;
     }
-
-    public void setAnnotation_count(int annotation_count) {
-        this.annotation_count = annotation_count;
-    }
-
-    public String getApi_path() {
-        return api_path;
-    }
-
-    public void setApi_path(String api_path) {
-        this.api_path = api_path;
-    }
+    
 
     public String getArtist_names() {
         return artist_names;
@@ -166,14 +156,6 @@ public class Result {
 
     public void setSong_art_image_url(String song_art_image_url) {
         this.song_art_image_url = song_art_image_url;
-    }
-
-    public Stats getStats() {
-        return stats;
-    }
-
-    public void setStats(Stats stats) {
-        this.stats = stats;
     }
 
     public String getTitle() {

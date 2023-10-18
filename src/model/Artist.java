@@ -12,14 +12,38 @@ import com.google.gson.annotations.SerializedName;
  * @author MINHNHAT
  */
 public class Artist {
-
-//    public List<String> getAlternateNames() {
-//        return alternateNames;
-//    }
-//
-//    public void setAlternateNames(List<String> alternateNames) {
-//        this.alternateNames = alternateNames;
-//    }
+    @SerializedName("api_path")
+    String apiPath;
+    Description description;
+    @SerializedName("facebook_name")
+    String facebookName;
+    @SerializedName("followers_count")
+    int followersCount;
+    @SerializedName("header_image_url")
+    String headerImageUrl;
+    int id;
+    @SerializedName("image_url")
+    String imageUrl;
+    @SerializedName("instagram_name")
+    String instagramName;
+    @SerializedName("is_meme_verified")
+    boolean isMemeVerified;
+    @SerializedName("is_verified")
+    boolean isVerified;
+    String name;
+    @SerializedName("translation_artist")
+    boolean translationArtist;
+    @SerializedName("twitter_name")
+    String twitterName;
+    String url;
+    int iq;
+    //    public List<String> getAlternateNames() {
+    //        return alternateNames;
+    //    }
+    //
+    //    public void setAlternateNames(List<String> alternateNames) {
+    //        this.alternateNames = alternateNames;
+    //    }
 
     public String getApiPath() {
         return apiPath;
@@ -144,29 +168,5 @@ public class Artist {
 
 //    @SerializedName("alternate_names")
 //    List<String> alternateNames;
-    @SerializedName("api_path")
-    String apiPath;
-    Description description;
-    @SerializedName("facebook_name")
-    String facebookName;
-    @SerializedName("followers_count")
-    int followersCount;
-    @SerializedName("header_image_url")
-    String headerImageUrl;
-    int id;
-    @SerializedName("image_url")
-    String imageUrl;
-    @SerializedName("instagram_name")
-    String instagramName;
-    @SerializedName("is_meme_verified")
-    boolean isMemeVerified;
-    @SerializedName("is_verified")
-    boolean isVerified;
-    String name;
-    @SerializedName("translation_artist")
-    boolean translationArtist;
-    @SerializedName("twitter_name")
-    String twitterName;
-    String url;
-    int iq;
+    
 }

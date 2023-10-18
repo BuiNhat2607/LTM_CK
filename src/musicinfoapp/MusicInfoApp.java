@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package musicinfoapp;
+import client.frmSearchMusic;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,8 +18,9 @@ public class MusicInfoApp {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, InterruptedException {
-
+    public static void main(String[] args) {
+        frmSearchMusic frm=new frmSearchMusic();
+        frm.setVisible(true);
 
     }
     
