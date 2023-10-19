@@ -20,7 +20,7 @@ import model.Hit;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class HitsCell extends JButton{
     private Hit hit;

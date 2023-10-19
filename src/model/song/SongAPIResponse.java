@@ -10,7 +10,7 @@ import model.Meta;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class SongAPIResponse {
     @SerializedName("meta")

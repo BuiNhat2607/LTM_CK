@@ -1,10 +1,8 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package client;
-
-//import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.engine.Engine;
@@ -24,7 +22,7 @@ import javax.swing.WindowConstants;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class GeniusWebView {
     public void buildBroswer(String youtubeUrl){

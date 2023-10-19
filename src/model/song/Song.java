@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class Song {
     private List<Media> media;

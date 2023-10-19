@@ -11,7 +11,7 @@ import com.google.gson.JsonParser;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class TruncateJson {
     public static String truncateJsonSearch(String json){

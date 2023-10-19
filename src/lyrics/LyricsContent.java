@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class LyricsContent {
     @SerializedName("body")

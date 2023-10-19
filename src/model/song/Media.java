@@ -6,7 +6,7 @@ package model.song;
 
 /**
  *
- * @author WitherDragon
+ * @author MINHNHAT
  */
 public class Media {
     private String provider;
