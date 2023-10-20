@@ -21,11 +21,11 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import model.Artist;
+import model.artist.Artist;
 //import model.Children;
 //import model.Dom;
 import model.GeniusApiResponse;
-import model.GeniusArtistApiResponse;
+import model.artist.GeniusArtistApiResponse;
 import model.Hit;
 import model.Meta;
 
@@ -33,9 +33,6 @@ import model.Meta;
 
 import model.Response;
 //import model.Tag;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  *
@@ -68,6 +65,12 @@ public class frmSearchMusic extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mytube");
+
+        txtName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNameActionPerformed(evt);
+            }
+        });
 
         btnSearch.setText("Search");
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
@@ -133,9 +136,10 @@ public class frmSearchMusic extends javax.swing.JFrame {
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         loadingBar.setVisible(true);
         loadingBar.setIndeterminate(true);
+        
          Thread searchThread = new Thread(() -> {
             String result = sendRequestToServer("search" + "@" + txtName.getText());
-            System.out.println("KEt qua bai hat :"+result);
+            System.out.println("Ket qua bai hat :"+result);
             GeniusApiResponse geniusApiResponse = gson.fromJson(result, GeniusApiResponse.class);
             //Kết quả request API
             Meta meta = geniusApiResponse.getMeta();
@@ -156,6 +160,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
 
             revalidate(); // Refresh the layout of the containers
             repaint(); 
+            
             loadingBar.setIndeterminate(false);
             loadingBar.setVisible(false);
         });
@@ -164,23 +169,11 @@ public class frmSearchMusic extends javax.swing.JFrame {
         searchThread.start();
 
     }//GEN-LAST:event_btnSearchActionPerformed
-    public void LyricsScraper(String url) {
 
-        try {
-            Document document = Jsoup.connect(url).get();
-            Element lyricsElement = document.select("div.lyrics").first();
-            
-            if (lyricsElement != null) {
-                String lyrics = lyricsElement.text();
-                System.out.println("Lyrics:\n" + lyrics);
-            } else {
-                System.out.println("Lyrics not found on the page.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
+    private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNameActionPerformed
+   
 
     private String sendRequestToServer(String request) {
         try (Socket socket = new Socket("localhost", 12346);){

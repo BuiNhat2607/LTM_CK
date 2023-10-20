@@ -5,7 +5,7 @@
 package model.song;
 
 import com.google.gson.annotations.SerializedName;
-import model.ArtistResponse;
+import model.artist.ArtistResponse;
 import model.Meta;
 
 /**

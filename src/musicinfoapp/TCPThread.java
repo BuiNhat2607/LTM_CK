@@ -15,7 +15,6 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 
-
 /**
  *
  * @author MINHNHAT
@@ -39,26 +38,28 @@ public class TCPThread extends Thread {
     @Override
     public void run() {
         try (
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);) {
             //Nhận dữ liệu từ client
             String[] fromClient = in.readLine().split("@");
             if (fromClient.length == 2) {
                 if (fromClient[0].equals("search")) {
-                    String result=searchGeniusAPI(fromClient[1]);
-                    String response=TruncateJson.truncateJsonSearch(result);
+                    String result = searchGeniusAPI(fromClient[1]);
+                    String response = TruncateJson.truncateJsonSearch(result);
                     out.println(response);
                 } else if (fromClient[0].equals("artist")) {
                     String kq = getArtistAPI(fromClient[1]);
-                    out.println(kq);
+                    String response=TruncateJson.truncateArtistJson(kq);
 //                    System.out.println("Ket qua ::::::::::::::::::::::::::::::::::::::::::::::::" + kq);
-                } else if((fromClient[0].equals("lyrics"))){
+                    out.println(response);
+//                    System.out.println("Ket qua ::::::::::::::::::::::::::::::::::::::::::::::::" + kq);
+                } else if ((fromClient[0].equals("lyrics"))) {
                     String kq = fetchLyrics(fromClient[1]);
 
                     out.println(kq);
-                } else if((fromClient[0].equals("song"))){
+                } else if ((fromClient[0].equals("song"))) {
                     String kq = getSongAPI(fromClient[1]);
-                    String response=TruncateJson.truncateMediaJson(kq);
-                    System.out.println("Ket qua bai hat::::::"+response);
+                    String response = TruncateJson.truncateMediaJson(kq);
+                    System.out.println("Ket qua bai hat::::::" + response);
                     out.println(response);
                 }
             }
@@ -76,7 +77,7 @@ public class TCPThread extends Thread {
             }
         }
     }
-    
+
     public String searchGeniusAPI(String query) throws Exception {
         String encodedQuery = query.replace(" ", "%20");
         String apiUrl = GENIUS_API_BASE_URL + "?q=" + encodedQuery;
@@ -110,12 +111,12 @@ public class TCPThread extends Thread {
             throw new Exception("Failed to retrieve data from Genius API. Response code: " + responseCode);
         }
     }
-    
+
     public String getArtistAPI(String artistId) {
         try {
             // Construct the API URL for artists
             String encodedQuery = artistId.replace(" ", "%20");
-            String apiUrl = GENIUS_API_ARTIST + encodedQuery+"?text_format=plain";
+            String apiUrl = GENIUS_API_ARTIST + encodedQuery + "?text_format=plain";
 
             URL url = new URL(apiUrl);
 
@@ -137,7 +138,7 @@ public class TCPThread extends Thread {
                 }
                 in.close();
                 return response.toString();
-                
+
             } else {
                 System.err.println("Failed to fetch data. Response code: " + responseCode);
                 return null;
@@ -147,11 +148,11 @@ public class TCPThread extends Thread {
             return null;
         }
     }
-    
+
     public String fetchLyrics(String id) {
-        String result=getLyricsAPI(id);
-        
-        String truncatedJson=TruncateJson.truncateLyricsJson(result);
+        String result = getLyricsAPI(id);
+
+        String truncatedJson = TruncateJson.truncateLyricsJson(result);
 
 //        System.out.println("Ket qua lyrics"+truncatedJson);
         if (!truncatedJson.isEmpty()) {
@@ -159,10 +160,11 @@ public class TCPThread extends Thread {
         } else {
             return "Fail";
         }
-   }
+    }
+
     public String getLyricsAPI(String id) {
         // API URL
-        String apiUrl =  GENIUS_LYRICS_URL+ id;
+        String apiUrl = GENIUS_LYRICS_URL + id;
 
         // API headers
         String host = "genius-song-lyrics1.p.rapidapi.com";
@@ -194,22 +196,23 @@ public class TCPThread extends Thread {
                     response.append(line);
                 }
                 reader.close();
-               
+
                 return response.toString();
             } else {
                 // Handle the error, e.g., by logging or returning an error message
-                return "Error:"+responseCode;
+                return "Error:" + responseCode;
             }
         } catch (IOException e) {
             // Handle exceptions, e.g., network errors
-            return "Error:"+e.toString();
+            return "Error:" + e.toString();
         }
     }
+
     public String getSongAPI(String songId) {
         try {
             // Construct the API URL for artists
             String encodedQuery = songId.replace(" ", "%20");
-            String apiUrl = GENIUS_SONG_URL + encodedQuery+"?text_format=plain";
+            String apiUrl = GENIUS_SONG_URL + encodedQuery + "?text_format=plain";
 
             URL url = new URL(apiUrl);
 
@@ -231,7 +234,7 @@ public class TCPThread extends Thread {
                 }
                 in.close();
                 return response.toString();
-                
+
             } else {
                 System.err.println("Failed to fetch data. Response code: " + responseCode);
                 return null;

@@ -14,7 +14,8 @@ import com.google.gson.JsonParser;
  * @author MINHNHAT
  */
 public class TruncateJson {
-    public static String truncateJsonSearch(String json){
+
+    public static String truncateJsonSearch(String json) {
         JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
         JsonObject response = rootJson.getAsJsonObject("response");
         JsonArray hits = response.getAsJsonArray("hits");
@@ -49,7 +50,8 @@ public class TruncateJson {
 //        System.out.println(gson.toJson(rootJson));
         return rootJson.toString();
     }
-    public static String truncateLyricsJson(String json){
+
+    public static String truncateLyricsJson(String json) {
         JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
         rootJson.getAsJsonObject("lyrics").remove("api_path");
         rootJson.getAsJsonObject("lyrics").remove("_type");
@@ -58,12 +60,29 @@ public class TruncateJson {
         rootJson.getAsJsonObject("lyrics").remove("tracking_data");
         return rootJson.toString();
     }
+    public static String truncateArtistJson(String json) {
+        JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
+        JsonObject artistJson = rootJson.getAsJsonObject("response").getAsJsonObject("artist");
+        artistJson.remove("api_path");
+        artistJson.remove("followers_count");
+        artistJson.remove("header_image_url");
+        artistJson.remove("is_meme_verified");
+        artistJson.remove("is_verified");
+        artistJson.remove("translation_artist");
+        artistJson.remove("url");
+        artistJson.remove("current_user_metadata");
+        artistJson.remove("iq");
+        artistJson.remove("description_annotation");
+        artistJson.remove("user");
+        return artistJson.toString();
+    }
     public static String truncateMediaJson(String json) {
         JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
 
         JsonObject songObject = rootJson.getAsJsonObject("response").getAsJsonObject("song");
 
         // Remove unwanted properties from the "song" object
+        //  Cắt những trường không dùng.
         songObject.remove("annotation_count");
         songObject.remove("api_path");
         songObject.remove("apple_music_id");
@@ -108,7 +127,7 @@ public class TruncateJson {
         songObject.remove("verified_contributors");
         songObject.remove("verified_lyrics_by");
         songObject.remove("writer_artists");
-        System.out.println("Ket qua cat JSON::::"+rootJson.toString());
+        System.out.println("Ket qua cat JSON::::" + rootJson.toString());
         // Convert the modified JSON back to a string
         return rootJson.toString();
     }

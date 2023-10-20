@@ -5,6 +5,9 @@
 package client;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -15,6 +18,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -22,7 +26,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.border.Border;
 import lyrics.SongLyricsResponse;
+import model.artist.Artist;
+import model.artist.GeniusArtistApiResponse;
 import model.Hit;
+import model.PrimaryArtist;
 import model.song.Media;
 import model.song.Song;
 import model.song.SongAPIResponse;
@@ -32,24 +39,28 @@ import model.song.SongAPIResponse;
  * @author MINHNHAT
  */
 public class frmSong extends javax.swing.JFrame {
+
     private static Hit hit;
+
     /**
      * Creates new form Option
+     *
      * @param hit
      */
     public frmSong(Hit hit) {
         initComponents();
         styleFormAndButton();
         loadSong(hit);
-        frmSong.hit=hit;
+        frmSong.hit = hit;
     }
+
     private void loadSong(Hit hit) {
         try {
-            URL imageUrl=new URL(hit.getResult().getSong_art_image_url());
+            URL imageUrl = new URL(hit.getResult().getSong_art_image_url());
             ImageIcon imageIcon = new ImageIcon(imageUrl);
 
             Image scaledImage = imageIcon.getImage().getScaledInstance(lbThumbNail.getWidth(), lbThumbNail.getHeight(), Image.SCALE_SMOOTH);
-            
+
             ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
             lbThumbNail.setIcon(scaledImageIcon);
             lbSongName.setText(hit.getResult().getFull_title());
@@ -57,25 +68,27 @@ public class frmSong extends javax.swing.JFrame {
             System.out.println("Load image fail");
         }
     }
-    private void styleFormAndButton(){
+    
+    private void styleFormAndButton() {
         btnArtistOption.setFont(new Font("Helvetica", Font.PLAIN, 18));
         btnArtistOption.setForeground(Color.WHITE);
-        btnArtistOption.setBackground(new Color(52, 152, 219)); 
+        btnArtistOption.setBackground(new Color(52, 152, 219));
         Border buttonBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
-        btnArtistOption.setBorder(buttonBorder); 
+        btnArtistOption.setBorder(buttonBorder);
 
         btnLyricsOption.setFont(new Font("Helvetica", Font.PLAIN, 18));
         btnLyricsOption.setForeground(Color.WHITE);
-        btnLyricsOption.setBackground(new Color(46, 204, 113)); 
-        btnLyricsOption.setBorder(buttonBorder); 
-        
+        btnLyricsOption.setBackground(new Color(46, 204, 113));
+        btnLyricsOption.setBorder(buttonBorder);
+
         btnOpenWeb.setFont(new Font("Helvetica", Font.PLAIN, 18));
         btnOpenWeb.setForeground(Color.WHITE);
-        btnOpenWeb.setBackground(new Color(113, 204, 46)); 
+        btnOpenWeb.setBackground(new Color(113, 204, 46));
         btnOpenWeb.setBorder(buttonBorder);
         // Customize the form background color
         getContentPane().setBackground(new Color(236, 240, 241));
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -92,10 +105,16 @@ public class frmSong extends javax.swing.JFrame {
         btnOpenWeb = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtLyrics = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnArtistOption.setText("Thông tin nghệ sĩ");
+        btnArtistOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnArtistOptionActionPerformed(evt);
+            }
+        });
 
         btnLyricsOption.setText("Lời bài hát");
         btnLyricsOption.addActionListener(new java.awt.event.ActionListener() {
@@ -116,10 +135,19 @@ public class frmSong extends javax.swing.JFrame {
         txtLyrics.setRows(5);
         jScrollPane1.setViewportView(txtLyrics);
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setText("BÀI HÁT");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(124, 124, 124)
+                .addComponent(lbSongName, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(158, 158, 158)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(87, 87, 87)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -128,22 +156,23 @@ public class frmSong extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnOpenWeb, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+                        .addComponent(btnOpenWeb, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(btnLyricsOption, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addGap(85, 85, 85))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(114, 114, 114)
-                .addComponent(lbSongName, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
-                .addComponent(lbSongName, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(74, Short.MAX_VALUE)
+                        .addComponent(lbSongName, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbThumbNail, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -160,17 +189,17 @@ public class frmSong extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOpenWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenWebActionPerformed
-        String result=sendRequestToServer("song"+"@"+hit.getResult().getId());
-        SongAPIResponse song=new Gson().fromJson(result, SongAPIResponse.class);
-        System.out.println("Ket qua bai hat tra ve ::"+result);
-        GeniusWebView gwv=new GeniusWebView();
-        
+        String result = sendRequestToServer("song" + "@" + hit.getResult().getId());
+        SongAPIResponse song = new Gson().fromJson(result, SongAPIResponse.class);
+        System.out.println("Ket qua bai hat tra ve ::" + result);
+        GeniusWebView gwv = new GeniusWebView();
+
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                List<Media> listMedia=song.getResponse().getSong().getMedia();
-                for(Media me : listMedia){
-                    if(me.getProvider().equals("youtube")){
+                List<Media> listMedia = song.getResponse().getSong().getMedia();
+                for (Media me : listMedia) {
+                    if (me.getProvider().equals("youtube")) {
                         gwv.buildBroswer(me.getUrl());
                     }
                 }
@@ -178,11 +207,11 @@ public class frmSong extends javax.swing.JFrame {
             }
         };
         worker.execute();
-       
+
     }//GEN-LAST:event_btnOpenWebActionPerformed
     private String sendRequestToServer(String request) {
-        try (Socket socket = new Socket("localhost", 12346);){
-            
+        try (Socket socket = new Socket("localhost", 12346);) {
+
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(request);
@@ -194,17 +223,27 @@ public class frmSong extends javax.swing.JFrame {
         }
     }
     private void btnLyricsOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLyricsOptionActionPerformed
-        String result=sendRequestToServer("lyrics"+"@"+hit.getResult().getId());
-        SongLyricsResponse responeLyrics=new Gson().fromJson(result, SongLyricsResponse.class);
-        if(!result.equals("Fail")){
-            String lyrics=responeLyrics.getLyrics().getLyricsContent().getBody().getHtml();
+        String result = sendRequestToServer("lyrics" + "@" + hit.getResult().getId());
+        SongLyricsResponse responeLyrics = new Gson().fromJson(result, SongLyricsResponse.class);
+        if (!result.equals("Fail")) {
+            String lyrics = responeLyrics.getLyrics().getLyricsContent().getBody().getHtml();
             String cleanedLyrics = lyrics.replaceAll("<[^>]*>", "");
             txtLyrics.setText(cleanedLyrics);
-        }
-        else{
-            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!","Lỗi",0);
+        } else {
+            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!", "Lỗi", 0);
         }
     }//GEN-LAST:event_btnLyricsOptionActionPerformed
+   
+    private void btnArtistOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArtistOptionActionPerformed
+        PrimaryArtist primaryArtist=hit.getResult().getPrimary_artist();
+        String result = sendRequestToServer("artist" + "@" + primaryArtist.getId());
+        Gson gson= new GsonBuilder().setPrettyPrinting().create();
+        Artist artist=gson.fromJson(result, Artist.class);
+        System.out.println(artist.getImageUrl());
+        frmArtist frm=new frmArtist(artist);
+        frm.setVisible(true);
+        
+    }//GEN-LAST:event_btnArtistOptionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -238,6 +277,7 @@ public class frmSong extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new frmSong(hit).setVisible(true);
+
             }
         });
     }
@@ -246,6 +286,7 @@ public class frmSong extends javax.swing.JFrame {
     private javax.swing.JButton btnArtistOption;
     private javax.swing.JButton btnLyricsOption;
     private javax.swing.JButton btnOpenWeb;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbSongName;
     private javax.swing.JLabel lbThumbNail;
