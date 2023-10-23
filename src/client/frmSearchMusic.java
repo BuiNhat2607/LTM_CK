@@ -30,7 +30,6 @@ import model.Hit;
 import model.Meta;
 
 //import model.P;
-
 import model.Response;
 //import model.Tag;
 
@@ -49,7 +48,7 @@ public class frmSearchMusic extends javax.swing.JFrame {
         initComponents();
         ImageIcon icon = new ImageIcon("src\\icons\\youtube.png");
         setIconImage(icon.getImage());
-        gson =  new GsonBuilder().setPrettyPrinting().create();
+        gson = new GsonBuilder().setPrettyPrinting().create();
         loadingBar.setVisible(false);
     }
 
@@ -136,31 +135,31 @@ public class frmSearchMusic extends javax.swing.JFrame {
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         loadingBar.setVisible(true);
         loadingBar.setIndeterminate(true);
-        
-         Thread searchThread = new Thread(() -> {
+
+        Thread searchThread = new Thread(() -> {
             String result = sendRequestToServer("search" + "@" + txtName.getText());
-            System.out.println("Ket qua bai hat :"+result);
+            System.out.println("Ket qua bai hat :" + result);
             GeniusApiResponse geniusApiResponse = gson.fromJson(result, GeniusApiResponse.class);
             //Kết quả request API
             Meta meta = geniusApiResponse.getMeta();
             Response response = geniusApiResponse.getResponse();
             List<Hit> hits = response.getHits();
-            int numColumns =4;
+            int numColumns = 4;
             int numRows = (int) Math.ceil((double) hits.size() / numColumns);
-            JPanel resultPanel = new JPanel(new GridLayout(numRows, numColumns,10, 10));
+            JPanel resultPanel = new JPanel(new GridLayout(numRows, numColumns, 10, 10));
 
-            resultPanel.setSize(pnResult.getWidth(),pnResult.getHeight());
+            resultPanel.setSize(pnResult.getWidth(), pnResult.getHeight());
             for (Hit hit : hits) {
                 HitsCell hitCell = new HitsCell(hit);
                 resultPanel.add(hitCell); // Add to gridPanel instead of pnResult
-                System.out.println("Cac ban hit"+hit.getResult().getTitle());
+                System.out.println("Cac ban hit" + hit.getResult().getTitle());
             }
             pnResult.removeAll(); // Clear the pnResult panel
             pnResult.add(resultPanel); // Add the gridPanel to pnResult
 
             revalidate(); // Refresh the layout of the containers
-            repaint(); 
-            
+            repaint();
+
             loadingBar.setIndeterminate(false);
             loadingBar.setVisible(false);
         });
@@ -173,11 +172,10 @@ public class frmSearchMusic extends javax.swing.JFrame {
     private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNameActionPerformed
-   
 
     private String sendRequestToServer(String request) {
-        try (Socket socket = new Socket("localhost", 12346);){
-            
+        try (Socket socket = new Socket("localhost", 12346);) {
+
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(request);
@@ -188,9 +186,6 @@ public class frmSearchMusic extends javax.swing.JFrame {
             return "SocketError" + ex.toString();
         }
     }
-    
-
-
 
     /**
      * @param args the command line arguments

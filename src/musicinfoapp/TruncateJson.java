@@ -60,6 +60,7 @@ public class TruncateJson {
         rootJson.getAsJsonObject("lyrics").remove("tracking_data");
         return rootJson.toString();
     }
+
     public static String truncateArtistJson(String json) {
         JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
         JsonObject artistJson = rootJson.getAsJsonObject("response").getAsJsonObject("artist");
@@ -76,6 +77,7 @@ public class TruncateJson {
         artistJson.remove("user");
         return artistJson.toString();
     }
+
     public static String truncateMediaJson(String json) {
         JsonObject rootJson = JsonParser.parseString(json).getAsJsonObject();
 
